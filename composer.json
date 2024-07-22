@@ -1,0 +1,43 @@
+{
+  "name": "ibrahim-bedir/omnipay-paybull",
+  "type": "library",
+  "description": "PayBull driver for Omnipay payment processing library",
+  "keywords": [
+    "php",
+    "omnipay",
+    "paybull",
+    "merchant",
+    "payment"
+  ],
+  "homepage": "https://github.com/ibrahim-bedir/omnipay-paybull",
+  "license": "MIT",
+  "support": {
+    "email": "support@hiqdev.com",
+    "source": "https://github.com/ibrahim-bedir/omnipay-paybull",
+    "issues": "https://github.com/ibrahim-bedir/omnipay-paybull/issues",
+    "wiki": "https://github.com/ibrahim-bedir/omnipay-paybull/wiki"
+  },
+  "authors": [
+    {
+      "name": "İbrahim Bedir",
+      "role": "Developer",
+      "email": "ibrahimbedir43@gmail.com"
+    },
+    {
+      "name": "Ahmet Bedir",
+      "role": "Senior Software Developer"
+    }
+  ],
+  "require": {
+    "omnipay/common": "^3.0",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "omnipay/tests": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Omnipay\\PayBull\\": "src"
+    }
+  }
+}
