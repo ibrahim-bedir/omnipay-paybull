@@ -12,7 +12,7 @@
   "homepage": "https://github.com/ibrahim-bedir/omnipay-paybull",
   "license": "MIT",
   "support": {
-    "email": "support@hiqdev.com",
+    "email": "ibrahimbedir43@gmail.com",
     "source": "https://github.com/ibrahim-bedir/omnipay-paybull",
     "issues": "https://github.com/ibrahim-bedir/omnipay-paybull/issues",
     "wiki": "https://github.com/ibrahim-bedir/omnipay-paybull/wiki"
@@ -25,7 +25,8 @@
     },
     {
       "name": "Ahmet Bedir",
-      "role": "Senior Software Developer"
+      "role": "Senior Software Developer",
+      "email": "ahmetbedir16@gmail.com"
     }
   ],
   "require": {
