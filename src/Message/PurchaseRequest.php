@@ -3,47 +3,24 @@
 namespace Omnipay\PayBull\Message;
 
 use Omnipay\Common\Item;
+use Omnipay\Common\Message\ResponseInterface;
 
 class PurchaseRequest extends AbstractRequest
 {
     public function getEndpoint(): string
     {
-        return $this->getTestMode()
-            ? 'https://test.paybull.com/ccpayment/api/paySmart3D'
-            : 'https://app.paybull.com/ccpayment/api/paySmart3D';
-    }
-
-    public function getAccessToken(): string
-    {
-        return $this->getParameter('access_token');
-    }
-
-    public function setAccessToken($value)
-    {
-        return $this->setParameter('access_token', $value);
-    }
-
-    public function getCurrencyCode()
-    {
-        return $this->getCurrency() ?? 'TRY';
-    }
-
-    public function getInstallmentsNumber()
-    {
-        return $this->getInstallments() ?? 1;
+        return $this->getBaseEndpoint() . $this->getModelEndpoint();
     }
 
     public function getData()
     {
         $this->validate(
-            'merchant_key',
-            'transaction_id',
+            'merchantKey',
+            'transactionId',
             'amount',
-            'first_name',
-            'last_name',
             'items',
-            'cancel_url',
-            'return_url',
+            'cancelUrl',
+            'returnUrl',
             'card',
         );
 
@@ -53,13 +30,13 @@ class PurchaseRequest extends AbstractRequest
             'merchant_key' => $this->getMerchantKey(),
             'return_url' => $this->getReturnUrl(),
             'cancel_url' => $this->getCancelUrl(),
-            'currency_code' => $this->getCurrencyCode(),
+            'currency_code' => $this->getCurrency() ?? 'TRY',
 
-            'name' => $this->getFirstName(),
-            'surname' => $this->getLastName(),
+            'name' => $this->getCard()->getFirstName(),
+            'surname' => $this->getCard()->getLastName(),
             'invoice_id' => $this->getTransactionId(),
             'invoice_description' => $this->getDescription() ?? $this->getTransactionId(),
-            'installments_number' => $this->getInstallmentsNumber(),
+            'installments_number' => $this->getInstallment(),
             'total' => $this->getAmount(),
             'cc_holder_name' => $this->getCard()->getName(),
             'cc_no' => $this->getCard()->getNumber(),
@@ -67,28 +44,22 @@ class PurchaseRequest extends AbstractRequest
             'expiry_year' => $this->getCard()->getExpiryDate('y'),
             'cvv' => $this->getCard()->getCvv(),
             'hash_key' => $this->createHash(),
+            'ip' => $this->getClientIp(),
+            'response_method' => 'POST',
+            'transaction_type' => 'Auth',
         ];
 
-        $data['items'] = collect($this->getItems())->map(function (Item $item) {
-            return [
-                'name' => $item->getName(),
-                'price' => $item->getPrice(),
-                'quantity' => $item->getQuantity(),
-                'description' => $item->getDescription(),
-            ];
-        })->toJson();
+        $data['items'] = json_encode(array_map(fn (Item $item) => $item->getParameters(), $this->getItems()->all()));
 
         return $data;
     }
 
     public function createHash()
     {
-        $this->validate('amount', 'installments', 'currency', 'merchant_key', 'transaction_id');
-
         $data = implode('|', [
             $this->getAmount(),
-            $this->getInstallmentsNumber(),
-            $this->getCurrencyCode(),
+            $this->getInstallment(),
+            $this->getCurrency(),
             $this->getMerchantKey(),
             $this->getTransactionId(),
         ]);
@@ -106,20 +77,8 @@ class PurchaseRequest extends AbstractRequest
         return str_replace('/', '__', $msg_encrypted_bundle);
     }
 
-    public function sendData($data)
+    public function sendData($data): ResponseInterface
     {
-        $httpResponse = $this->httpClient->request(
-            'POST',
-            $this->getEndpoint(),
-            [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer '.$this->getAccessToken(),
-            ],
-            json_encode($data)
-        );
-
-        $responseBody = $httpResponse->getBody()->getContents();
-
-        return $this->response = new PurchaseResponse($this, $responseBody);
+        return $this->response = new PurchaseResponse($this, $data);
     }
 }

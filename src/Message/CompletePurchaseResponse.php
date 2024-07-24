@@ -16,82 +16,47 @@ class CompletePurchaseResponse extends AbstractResponse
         return parent::getRequest();
     }
 
-    /**
-     * CompletePurchaseResponse constructor.
-     *
-     * @param  mixed  $data
-     *
-     * @throws \Exception
-     */
-    public function __construct(RequestInterface $request, $data)
+    public function getCode()
     {
-        parent::__construct($request, $data);
-
-        $this->ensureSignatureIsCorrect();
-    }
-
-    /**
-     * @throws InvalidResponseException
-     */
-    private function ensureSignatureIsCorrect(): void
-    {
-        if ($this->getCode()) {
-            throw new InvalidResponseException(sprintf(
-                'Payment for order "%s" failed with code "%s"',
-                $this->getOrderId(),
-                $this->getCode()
-            ));
+        if ($this->isSuccessful()) {
+            return $this->data['status'] ?? null;
         }
 
-        if ($this->getSign() !== $this->createSignature()) {
-            throw new InvalidResponseException(sprintf(
-                'Failed to validate signature for order "%s"',
-                $this->getOrderId()
-            ));
-        }
-    }
-
-    private function createSignature(): string
-    {
-        return md5(implode(';', [
-            $this->getOrderId(),
-            $this->getTransactionReference(),
-            $this->getRequest()->getSecret(),
-        ]));
-    }
-
-    private function getSign(): ?string
-    {
-        if (isset($this->data['sign'])) {
-            return strtolower($this->data['sign']);
-        }
-
-        return null;
+        return $this->getErrorCode();
     }
 
     public function getMessage()
     {
-        return $this->data['msg'] ?? 'Something went wrong';
+        if($this->isSuccessful()) {
+            return $this->data['status_description'] ?? null;
+        }
+
+        return $this->getErrorMessage();
     }
 
-    public function getCode()
+    public function getPaymentStatus()
     {
-        return $this->data['code'] ?? null;
-    }
-
-    public function getOrderId()
-    {
-        return $this->data['orderId'] ?? null;
+        return $this->data['payment_status'] ?? null;
     }
 
     public function isSuccessful()
     {
-        return $this->getTransactionReference() !== null;
+        return $this->getPaymentStatus() === 1;
     }
 
     public function getTransactionReference()
     {
-        return $this->data['transactionId'] ?? null;
+        return $this->data['order_id'] ?? null;
+    }
+
+    public function getErrorCode()
+    {
+        return $this->data['error_code'] ?? null;
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->data['error'] ?? null;
     }
 
     public function isRedirect()

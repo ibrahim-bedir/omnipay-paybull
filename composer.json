@@ -34,11 +34,17 @@
     "ext-json": "*"
   },
   "require-dev": {
-    "omnipay/tests": "^3.0"
+    "omnipay/tests": "^3.0",
+    "http-interop/http-factory-guzzle": "^1.2"
   },
   "autoload": {
     "psr-4": {
       "Omnipay\\PayBull\\": "src"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
     }
   }
 }

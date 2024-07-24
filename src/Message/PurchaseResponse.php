@@ -7,26 +7,57 @@ use Omnipay\Common\Message\RedirectResponseInterface;
 
 class PurchaseResponse extends AbstractResponse implements RedirectResponseInterface
 {
-    public function getRedirectUrl()
+    public function getCode()
     {
-        $dom = new \DOMDocument();
-        $dom->loadHTML($this->getData());
+        if ($this->isSuccessful()) {
+            return $this->data['status'] ?? null;
+        }
 
-        $getMetaRefresh = $dom->getElementsByTagName('meta')->item(1)->attributes->getNamedItem('content')->nodeValue;
-        $getMetaRefresh = explode('url=', $getMetaRefresh);
-        $redirectUrl = trim($getMetaRefresh[1], "'");
+        return $this->getErrorCode();
+    }
 
-        return $redirectUrl;
+    public function getMessage()
+    {
+        if($this->isSuccessful()) {
+            return $this->data['status_description'] ?? null;
+        }
+
+        return $this->getErrorMessage();
+    }
+
+    public function getPaymentStatus()
+    {
+        return $this->data['payment_status'] ?? null;
     }
 
     public function isSuccessful()
     {
-        return false;
+        return $this->getPaymentStatus() === 1;
+    }
+
+    public function getTransactionReference()
+    {
+        return $this->data['order_id'] ?? null;
+    }
+
+    public function getErrorCode()
+    {
+        return $this->data['error_code'] ?? null;
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->data['error'] ?? null;
     }
 
     public function isRedirect()
     {
-        return true;
+        return $this->getPaymentStatus() === null;
+    }
+
+    public function getRedirectUrl()
+    {
+        return $this->request->getEndpoint();
     }
 
     public function getRedirectMethod()

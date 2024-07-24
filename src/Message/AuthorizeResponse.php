@@ -5,7 +5,7 @@ namespace Omnipay\PayBull\Message;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\RequestInterface;
 
-class AuthenticateResponse extends \Omnipay\Common\Message\AbstractResponse
+class AuthorizeResponse extends \Omnipay\Common\Message\AbstractResponse
 {
     public function __construct(RequestInterface $request, $data)
     {
@@ -20,7 +20,7 @@ class AuthenticateResponse extends \Omnipay\Common\Message\AbstractResponse
         }
     }
 
-    public function getAccessToken(): ?string
+    public function getToken(): ?string
     {
         return $this->data['data']['token'] ?? null;
     }
@@ -52,5 +52,10 @@ class AuthenticateResponse extends \Omnipay\Common\Message\AbstractResponse
         $statusDescription = $this->data['status_description'] ?? null;
 
         return $statusCode != 30 || $statusDescription != 'Invalid credentials';
+    }
+
+    public function getModel(): ?string
+    {
+        return $this->data['is_3d'] ?? null;
     }
 }
