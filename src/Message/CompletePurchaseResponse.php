@@ -34,14 +34,9 @@ class CompletePurchaseResponse extends AbstractResponse
         return $this->getErrorMessage();
     }
 
-    public function getPaymentStatus()
-    {
-        return $this->data['payment_status'] ?? null;
-    }
-
     public function isSuccessful()
     {
-        return $this->getPaymentStatus() == 100;
+        return $this->data['status_code'] == 100;
     }
 
     public function getTransactionReference()
