@@ -27,7 +27,7 @@ class CompletePurchaseResponse extends AbstractResponse
 
     public function getMessage()
     {
-        if($this->isSuccessful()) {
+        if ($this->isSuccessful()) {
             return $this->data['status_description'] ?? null;
         }
 
@@ -41,7 +41,7 @@ class CompletePurchaseResponse extends AbstractResponse
 
     public function isSuccessful()
     {
-        return $this->getPaymentStatus() === 1;
+        return $this->getPaymentStatus() == 100;
     }
 
     public function getTransactionReference()
