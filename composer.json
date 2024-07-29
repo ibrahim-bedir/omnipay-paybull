@@ -9,6 +9,7 @@
     "merchant",
     "payment"
   ],
+  "version": "1.0.0",
   "homepage": "https://github.com/ibrahim-bedir/omnipay-paybull",
   "license": "MIT",
   "support": {
@@ -31,10 +32,11 @@
   ],
   "require": {
     "omnipay/common": "^3.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "symfony/http-client": "^7.1",
+    "php-http/httplug": "^2.4"
   },
   "require-dev": {
-    "omnipay/tests": "^3.0",
     "http-interop/http-factory-guzzle": "^1.2"
   },
   "autoload": {

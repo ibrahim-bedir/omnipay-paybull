@@ -18,7 +18,7 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
 
     public function getMessage()
     {
-        if($this->isSuccessful()) {
+        if ($this->isSuccessful()) {
             return $this->data['status_description'] ?? null;
         }
 
@@ -68,5 +68,10 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
     public function getRedirectData()
     {
         return $this->data;
+    }
+
+    public function redirect()
+    {
+        return $this->getRedirectResponse()->getContent();
     }
 }

@@ -5,12 +5,12 @@ namespace Omnipay\PayBull;
 use Exception;
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Common\Message\AbstractRequest;
-use Omnipay\PayBull\Message\DetailsRequest;
 use Omnipay\PayBull\Message\DetailsResponse;
 use Omnipay\PayBull\Message\PurchaseRequest;
 use Omnipay\PayBull\Message\AuthorizeRequest;
 use Omnipay\PayBull\Message\AuthorizeResponse;
 use Omnipay\PayBull\Message\CompletePurchaseRequest;
+use Omnipay\PayBull\Message\InstallmentDetailsRequest;
 
 class Gateway extends AbstractGateway
 {
@@ -42,19 +42,17 @@ class Gateway extends AbstractGateway
      */
     public function completePurchase(array $parameters = [])
     {
-        $this->getToken();
-
         return $this->createRequest(CompletePurchaseRequest::class, $parameters);
     }
 
     /**
-     * @return \Omnipay\Common\Message\AbstractRequest|DetailsResponse
+     * @return InstallmentDetailsRequest|\Omnipay\Common\Message\AbstractRequest
      */
-    public function details(array $parameters = [])
+    public function installmentDetails(array $parameters = [])
     {
         $this->getToken();
 
-        return $this->createRequest(DetailsRequest::class, $parameters);
+        return $this->createRequest(InstallmentDetailsRequest::class, $parameters);
     }
 
     private function getToken()
@@ -63,7 +61,7 @@ class Gateway extends AbstractGateway
         $response = $this->authorize()->send();
         $token = $response->getToken();
 
-        if($response->isSuccessful() === false || empty($token)) {
+        if ($response->isSuccessful() === false || empty($token)) {
             throw new Exception('Failed to get token');
         }
 

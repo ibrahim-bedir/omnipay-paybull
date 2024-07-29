@@ -26,71 +26,10 @@ abstract class AbstractRequest extends BaseAbstractRequest
             : 'https://app.paybull.com/ccpayment';
     }
 
-    // public function sendData($data)
-    // {
-    //     $headers  = [
-    //         'Content-Type' => $this->getContentType(),
-    //         'Accept' => 'application/json',
-    //     ];
-
-    //     if($token = $this->getToken()) {
-    //         $headers['Authorization'] = 'Bearer ' . $token;
-    //     }
-
-
-    //     $body = null;
-
-    //     if($this->getContentType() === 'application/x-www-form-urlencoded') {
-    //         $body = http_build_query($data, '', '&');
-    //     } else {
-    //         $body = json_encode($data);
-    //     }
-
-
-    //     $response = $this->httpClient->request('POST', $this->getEndpoint(), $headers, $body);
-    //     $responseBody = $response->getBody()->getContents();
-
-    //     if ($response->getHeaderLine('Content-Type') === 'application/json') {
-    //         $responseBody = json_decode($responseBody, true);
-    //     }
-
-    //     if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-    //         return $this->createResponse($responseBody);
-    //     }
-
-    //     throw new Exception($responseBody, $response->getStatusCode());
-    // }
-
-    // private function getAccessToken(): ?string
-    // {
-    //     // If the request is AuthenticateRequest, then we don't need to get the token
-    //     if(get_class($this) === AuthorizeRequest::class) {
-    //         return null;
-    //     }
-
-    //     /** @var AuthorizeResponse $authResponse */
-    //     $authResponse = Omnipay::create(Gateway::class)
-    //         ->authorize($this->parameters->all())
-    //         ->send();
-
-    //     dd($authResponse);
-
-    //     $this->setModelEndpoint($authResponse->getModel());
-
-    //     return $authResponse->getAccessToken();
-    // }
-
-    // public function getContentType(): string
-    // {
-    //     switch (get_class($this)) {
-    //         case AuthorizeRequest::class:
-    //             return 'application/json';
-    //         default:
-    //             return 'application/x-www-form-urlencoded';
-    //     }
-    // }
-
-    // abstract public function createResponse($payload);
+    public function getInstallmentDetailsEndpoint(): string
+    {
+        return $this->getBaseEndpoint() . '/api/getpos';
+    }
 
     public function getModelEndpoint(): string
     {
@@ -152,7 +91,7 @@ abstract class AbstractRequest extends BaseAbstractRequest
     public function getToken()
     {
         // If the request is AuthenticateRequest, then we don't need to get the token
-        if(get_class($this) === AuthorizeRequest::class) {
+        if (get_class($this) === AuthorizeRequest::class) {
             return null;
         }
 
@@ -162,5 +101,15 @@ abstract class AbstractRequest extends BaseAbstractRequest
     public function getCurrency()
     {
         return $this->getParameter('currency') ?? 'TRY';
+    }
+
+    public function setCardNumber($value)
+    {
+        return $this->setParameter('cardNumber', $value);
+    }
+
+    public function getCardNumber()
+    {
+        return $this->getParameter('cardNumber');
     }
 }
